@@ -1,5 +1,6 @@
 'use client'
 
+import '@/lib/cwasa-types'
 import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -13,14 +14,6 @@ import {
 } from "@/components/ui/select"
 import { Button } from '@/components/ui/button'
 import { ISL_DATASET } from '@/isl-dataset'
-
-// Declare CWASA types
-declare global {
-  interface Window {
-    loadAvatar?: (avatar: string, url: string) => void
-    playSign?: (signFile: string) => void
-  }
-}
 
 // Dataset Viewer Component - Uses real ISL datasets (CISLR, INCLUDE, ISLTranslate)
 export const DatasetViewer = () => {

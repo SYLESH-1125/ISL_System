@@ -1,41 +1,82 @@
 @import 'tailwindcss';
 
+/* Class-based dark mode for next-themes */
+@variant dark (&:where(.dark, .dark *));
+
 @theme inline {
-  --radius: 0.5rem;
-  
-  --color-background: #ffffff;
-  --color-foreground: #09090b;
-  
-  --color-card: #ffffff;
-  --color-card-foreground: #09090b;
-  
-  --color-primary: #6366f1;
+  --radius: 0.75rem;
+
+  --color-background: #070b14;
+  --color-foreground: #f1f5f9;
+
+  --color-card: #0c1222;
+  --color-card-foreground: #f1f5f9;
+
+  --color-primary: #818cf8;
   --color-primary-foreground: #ffffff;
-  
-  --color-secondary: #f4f4f5;
-  --color-secondary-foreground: #18181b;
-  
-  --color-muted: #f4f4f5;
-  --color-muted-foreground: #71717a;
-  
-  --color-accent: #f4f4f5;
-  --color-accent-foreground: #18181b;
-  
-  --color-destructive: #ef4444;
-  --color-destructive-foreground: #fafafa;
-  
-  --color-border: #e4e4e7;
-  --color-input: #e4e4e7;
-  --color-ring: #6366f1;
+
+  --color-secondary: #2dd4bf;
+  --color-secondary-foreground: #042f2e;
+
+  --color-accent: #c084fc;
+  --color-accent-foreground: #faf5ff;
+
+  --color-muted: #151b2e;
+  --color-muted-foreground: #94a3b8;
+
+  --color-destructive: #f87171;
+  --color-destructive-foreground: #450a0a;
+
+  --color-success: #34d399;
+  --color-warning: #fbbf24;
+
+  --color-border: rgba(255, 255, 255, 0.06);
+  --color-input: rgba(255, 255, 255, 0.08);
+  --color-ring: #818cf8;
+
+  /* Showcase */
+  --shadow-glow: 0 0 80px -20px rgba(129, 140, 248, 0.35);
+  --shadow-card: 0 25px 50px -12px rgba(0, 0, 0, 0.55);
+}
+
+html.light {
+  --color-background: #f8fafc;
+  --color-foreground: #0f172a;
+  --color-card: #ffffff;
+  --color-card-foreground: #0f172a;
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
+  --color-border: #e2e8f0;
+  --color-input: #e2e8f0;
+  --shadow-glow: 0 0 60px -15px rgba(99, 102, 241, 0.2);
+  --shadow-card: 0 20px 40px -15px rgba(15, 23, 42, 0.12);
 }
 
 @keyframes ping {
-  75%, 100% {
+  75%,
+  100% {
     transform: scale(2);
     opacity: 0;
   }
 }
 
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 .animate-ping {
   animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Subtle grid for showcase pages */
+.bg-showcase-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
 }
