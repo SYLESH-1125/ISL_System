@@ -23,7 +23,7 @@ The app combines:
 
 | Layer | Technology |
 |--------|-------------|
-| Framework | **Next.js 16.0.3** (App Router), **Turbopack** in dev |
+| Framework | **Next.js 16.0.10** (App Router), **Turbopack** in dev |
 | UI | **React 19.2.0**, **TypeScript 5** |
 | Styling | **Tailwind CSS 4.x** (`@import 'tailwindcss'`, `@theme` in `app/globals.css`) |
 | Components | **shadcn-style** Radix UI primitives (`components/ui/*`) |
@@ -36,19 +36,59 @@ The app combines:
 
 ---
 
+## 2.1 Vercel deployment
+
+This app is designed to run as a **static-friendly Next.js** project on [Vercel](https://vercel.com). The live site is typically available at **[syldeep.vercel.app](https://syldeep.vercel.app)** (confirm the production domain under **Project → Settings → Domains**).
+
+### Connect the repo
+
+1. In Vercel: **Add New… → Project** → import **`SYLESH-1125/SYLDEEP`** from GitHub.
+2. **Framework Preset:** Next.js (auto-detected).
+3. **Root directory:** repository root (same folder as `package.json`).
+4. **Install command:** `pnpm install` (Vercel detects `pnpm-lock.yaml`).
+5. **Build command:** `pnpm build` (default `next build` is fine).
+6. **Output:** Next.js default (`.next`); no custom output directory required.
+
+### After deploy
+
+- **Analytics:** `@vercel/analytics` is already wired in `app/layout.tsx`.
+- **Large assets:** `public/js/allcsa.js` and `public/jas/` are big; first load can be slow—normal for CWASA.
+- **Security:** Keep **Next.js** on a patched release. Security fixes from Vercel (e.g. React Server Components–related CVEs) are merged via branches such as `vercel/react-server-components-cve-*`; re-run **`pnpm install`** / **`pnpm build`** locally after pulling `main`.
+
+### Troubleshooting
+
+| Issue | What to check |
+|--------|----------------|
+| Build fails on Vercel | Node version in Project Settings (use current LTS); ensure `pnpm-lock.yaml` is committed. |
+| Avatar blank | CWASA needs a real layout pass after load; ensure no ad blockers break scripts from `/js/allcsa.js`. |
+| Wrong thing on `localhost:3000` (local only) | Another service on port 3000; see `scripts/fix-pgbouncer-port.ps1` in §10. |
+
+---
+
 ## 3. Repository layout (high-signal paths)
 
 ```
 app/
   layout.tsx       # Root layout, metadata, fonts, Vercel Analytics
-  page.tsx         # Home: renders only <ISLAvatarPlayer />
+  page.tsx         # Home: full-viewport shell + <ISLAvatarPlayer />
   globals.css      # Tailwind v4 theme tokens
 
 components/
-  isl-avatar-player.tsx   # MAIN FEATURE — CWASA host, translator UI, tabs
-  dataset-viewer.tsx      # Searchable table over ISL_DATASET, triggers playSign
-  isl-animation-player.tsx  # Alternate/demo player (static image + fake timing) — NOT mounted on home page
-  ui/                     # Shared primitives (Button, Card, Select, …)
+  isl-translator-app.tsx  # MAIN FEATURE — translator shell, tabs, grid layout, CWASA script/link
+  isl-avatar-player.tsx     # Re-exports ISLTranslatorApp as ISLAvatarPlayer (compat)
+  isl/                      # InputPanel, AvatarPlayer, GlossDisplay, PlaybackControls, ThemeToggle
+  dataset-viewer.tsx        # Searchable table over ISL_DATASET, triggers playSign
+  isl-animation-player.tsx  # Alternate/demo player — NOT mounted on home page
+  ui/                       # Shared primitives (Button, Card, Select, …)
+
+hooks/
+  useCWASA.ts, useSignPlaybackQueue.ts, useSpeechRecognition.ts
+
+utils/
+  textProcessing.ts, sovConverter.ts, glossMapper.ts
+
+lib/
+  cwasa-types.ts, sigml-words.ts
 
 public/
   js/allcsa.js            # CWASA bundle (~5.5MB+), loaded via next/script
@@ -69,13 +109,13 @@ scripts/fix-pgbouncer-port.ps1  # Windows helper (optional): PgBouncer port 3000
 
 ### 4.1 Boot sequence
 
-1. User opens `/` → `app/page.tsx` mounts `ISLAvatarPlayer` inside a gradient `<main>`.
-2. `ISLAvatarPlayer` injects:
-   - `<Script src="/js/allcsa.js" strategy="afterInteractive" />` — loads **CWASA** on `window.CWASA`.
+1. User opens `/` → `app/page.tsx` mounts **`ISLAvatarPlayer`** (same module as **`ISLTranslatorApp`** in `components/isl-translator-app.tsx`).
+2. The translator injects:
+   - `<Script src="/js/allcsa.js" strategy="lazyOnload" />` — loads **CWASA** on `window.CWASA`.
    - `<link href="/css/cwasa.css" />` — styles for CWASA-generated controls.
-3. A `div` with classes **`CWASAAvatar av0`** must exist in the DOM; CWASA binds into it.
-4. A polling loop waits until `window.CWASA` exists **and** the `.CWASAAvatar.av0` node is present, then calls **`CWASA.init(initCfg)`** with avatar list `["luna","siggi","anna","marc","francoise"]` and initial avatar **`marc`**.
-5. The code polls for **canvas or iframe** (or substantial innerHTML) inside the avatar container to flip **`avatarLoaded`** / **`isLoading`** and status **Ready**.
+3. A `div` with classes **`CWASAAvatar av0`** must exist in the DOM; CWASA binds into it (single instance; do not mount two avatar trees).
+4. **`useCWASA`** waits for the script and container, then calls **`CWASA.init(initCfg)`** with avatar list `["luna","siggi","anna","marc","francoise"]` and initial avatar **`marc`**.
+5. Polling / resize hooks detect **canvas or iframe** (or substantial innerHTML) inside the avatar container to set **ready** state and fire **`resize`** for WebGL layout.
 
 ### 4.2 Text → glosses → SiGML URLs
 
@@ -88,13 +128,13 @@ scripts/fix-pgbouncer-port.ps1  # Windows helper (optional): PgBouncer port 3000
    - Else **`getFallbackSign`** tries **`WORD_TO_SIGN_MAP`** from `ISL_DATASET` (word → `sign`), then morphological variants (`ing`/`ed`/`s`…), then “substring contains a known `SIGML_WORDS` entry”.
    - If nothing matches, the word may be **skipped** for animation (logged in console).
 6. **SiGML path rule:** `playSiGMLAnimation` sets URL to **`/SignFiles/${filename}.sigml`** where `filename` is **uppercase** for single-character glosses (fingerspelling letters) and **lowercase** otherwise. It also sets hidden CWASA URL input `#URLText` (class `txtSiGMLURL av0`).
-7. **Playback engine:** `cwaRef.current.playSiGMLURL(sigmlURL)` is awaited; a **1s interval** scheduler walks the gloss list, using **`playerAvailableToPlay`** and DOM `.statusExtra` to guess when the player is ready for the next clip.
+7. **Playback engine:** `playSiGMLURL` is awaited per gloss; **`useSignPlaybackQueue`** advances the queue when `.statusExtra` (and related CWASA signals) indicate **ready / complete**—no UI `setInterval` for stepping the queue.
 
 ### 4.3 Dataset tab
 
 - Second tab **“Real ISL Dataset (1,722 Actions)”** toggles `activeTab === 'dataset'`.
 - **`DatasetViewer`** reads **`ISL_DATASET`**, filters by search string and category, renders a scrollable table.
-- Clicking a row’s “Watch Sign” tile calls **`window.playSign('/SignFiles/<sign>.sigml')`**, which **`ISLAvatarPlayer`** defines after CWASA init — reusing the same avatar instance.
+- Clicking a row’s “Watch Sign” tile calls **`window.playSign('/SignFiles/<sign>.sigml')`**, which **`useCWASA`** registers after init — reusing the same avatar instance.
 - On the dataset tab, the avatar card is **fixed bottom-right** (mini preview) while the table stays primary.
 
 ### 4.4 Unused / secondary component
@@ -114,7 +154,7 @@ scripts/fix-pgbouncer-port.ps1  # Windows helper (optional): PgBouncer port 3000
 
 ### 5.2 `SIGML_WORDS`
 
-- Large **string array** embedded in `isl-avatar-player.tsx` — words/glosses expected to map **1:1** to `public/SignFiles/<word>.sigml` (case rule above).
+- Large **string array** in **`lib/sigml-words.ts`** (and used via **`utils/glossMapper`**) — words/glosses expected to map **1:1** to `public/SignFiles/<word>.sigml` (case rule above).
 - This duplicates knowledge also implied by filesystem; **drift risk** if one side updates without the other.
 
 ### 5.3 `public/SignFiles`
@@ -170,7 +210,7 @@ scripts/fix-pgbouncer-port.ps1  # Windows helper (optional): PgBouncer port 3000
 
 Use these as **prompt seeds** for LLMs:
 
-1. **Single giant client component** (`isl-avatar-player.tsx` ~1000+ lines): hard to test, hard to tree-shake; split into hooks (`useCWASA`, `useSpeechRecognition`, `usePlaybackQueue`), presentational subcomponents, and pure modules for SOV + gloss resolution.
+1. **Evolving modularization:** core UI lives under **`components/isl/`** with **`hooks/useCWASA`**, **`useSignPlaybackQueue`**, **`useSpeechRecognition`**; keep new logic out of mega-files.
 2. **Duplicated vocabulary sources:** `SIGML_WORDS` vs filesystem vs `ISL_DATASET` — could generate one manifest at build time (`fs.readdir` of `SignFiles`) and type-check coverage.
 3. **SOV grammar** is regex/list-based and **English-centric**; edge cases and false verb detection are expected.
 4. **Playback timing:** fixed `setInterval` / `playerAvailableToPlay` heuristics vs CWASA events — likely to desync; could bind to CWASA callbacks if exposed.
@@ -192,20 +232,21 @@ Copy the block below into a new chat as **system or first user message** when yo
 You are helping with a Next.js 16 + React 19 + TypeScript + Tailwind 4 repo for “Text to Indian Sign Language”.
 
 Facts:
-- Entry: app/page.tsx renders components/isl-avatar-player.tsx only.
+- Entry: app/page.tsx renders ISLAvatarPlayer (components/isl-avatar-player.tsx re-exports ISLTranslatorApp from components/isl-translator-app.tsx).
 - Signing: public/js/allcsa.js exposes window.CWASA; avatar div has classes CWASAAvatar av0; SiGML URLs are /SignFiles/<gloss>.sigml (lower case words, upper case single letters).
-- Gloss pipeline: whitespace tokenization → optional Tamil/Hindi WORD_TRANSLATIONS → convertToSOV (heuristic English) → map to SIGML_WORDS or ISL_DATASET (isl-dataset.ts, ~1708 rows) → sequential playSiGMLURL with timers.
-- Dataset tab: components/dataset-viewer.tsx; uses window.playSign defined in isl-avatar-player.tsx.
+- Gloss pipeline: utils/textProcessing, utils/sovConverter, utils/glossMapper; SIGML_WORDS in lib/sigml-words.ts; ISL_DATASET in isl-dataset.ts (~1708 rows); playback queue in hooks/useSignPlaybackQueue.ts.
+- Dataset tab: components/dataset-viewer.tsx; window.playSign from useCWASA after init.
 - Dead/unused route component: components/isl-animation-player.tsx (not imported by app).
-- next.config.mjs: turbopack.root = project dir; typescript.ignoreBuildErrors true; images.unoptimized true.
-- Dev: next dev -p 3000; many static assets under public/jas and public/SignFiles.
+- next.config.mjs: turbopack.root = project dir; reactStrictMode false (CWASA global singleton); typescript.ignoreBuildErrors true; images.unoptimized true.
+- Dev: next dev -p 3000; deploy on Vercel (see README §2.1); production often at syldeep.vercel.app.
+- Mobile: compact stacked layout + scroll in isl-translator-app; preserve responsive classes when editing.
 
 Constraints: Prefer minimal diffs, match existing patterns (client components, shadcn ui), do not invent a backend unless asked. When suggesting refactors, name exact files. When optimizing performance, consider CWASA bundle size and client-only execution.
 ```
 
 **Example follow-up prompts:**
 
-- “Split `isl-avatar-player.tsx` into X files; show imports and public API.”
+- “Extend `components/isl-translator-app.tsx` / `components/isl/*` without breaking CWASA single-mount rules.”
 - “Add a build-time script that lists all `public/SignFiles/*.sigml` basenames and fails CI if `SIGML_WORDS` references a missing file.”
 - “Replace the custom tab buttons with shadcn Tabs and preserve CWASA DOM requirements.”
 - “Design a `useSignPlaybackQueue` hook that uses Promise + CWASA completion instead of setInterval.”
