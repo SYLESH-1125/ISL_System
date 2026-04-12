@@ -48,16 +48,16 @@ export function InputPanel({
       transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
       className="h-full w-full min-w-0 max-w-full"
     >
-      <Card className="group relative flex h-full min-h-0 w-full max-w-full min-w-0 max-h-full flex-col overflow-hidden rounded-3xl border border-white/[0.07] bg-card/40 p-0 shadow-[var(--shadow-card)] backdrop-blur-xl transition-colors hover:border-white/[0.1]">
+      <Card className="group relative flex h-full min-h-0 w-full max-w-full min-w-0 max-h-full flex-col overflow-hidden rounded-2xl border border-white/[0.07] bg-card/40 p-0 shadow-[var(--shadow-card)] backdrop-blur-xl transition-colors hover:border-white/[0.1] lg:rounded-3xl">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-80" />
 
-        <div className="flex flex-1 flex-col gap-4 px-5 pb-5 pt-5">
+        <div className="flex flex-1 flex-col gap-3 px-3.5 pb-3.5 pt-3.5 sm:gap-4 sm:px-5 sm:pb-5 sm:pt-5">
           <div className="shrink-0">
             <Label className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
               Recognition language
             </Label>
             <Select value={language} onValueChange={(v) => onLanguage(v as RecognitionLang)} disabled={disabled}>
-              <SelectTrigger className="mt-2 h-11 rounded-xl border-white/[0.08] bg-background/50 text-left text-sm shadow-inner transition hover:bg-background/70">
+              <SelectTrigger className="mt-1.5 h-10 rounded-lg border-white/[0.08] bg-background/50 text-left text-sm shadow-inner transition hover:bg-background/70 sm:mt-2 sm:h-11 sm:rounded-xl">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="z-[200] rounded-xl border-white/10">
@@ -79,14 +79,13 @@ export function InputPanel({
               Your message
             </Label>
             <textarea
-              className="mt-2 min-h-0 w-full flex-1 resize-none overflow-y-auto rounded-xl border border-white/[0.08] bg-background/40 px-3.5 py-3 text-sm leading-relaxed text-foreground shadow-inner outline-none transition placeholder:text-muted-foreground/45 focus:border-primary/35 focus:ring-2 focus:ring-primary/25"
-              style={{ minHeight: '6.5rem' }}
+              className="mt-1.5 min-h-[5.25rem] w-full flex-1 resize-none overflow-y-auto rounded-lg border border-white/[0.08] bg-background/40 px-3 py-2.5 text-sm leading-relaxed text-foreground shadow-inner outline-none transition placeholder:text-muted-foreground/45 focus:border-primary/35 focus:ring-2 focus:ring-primary/25 sm:mt-2 sm:min-h-[6.5rem] sm:rounded-xl sm:px-3.5 sm:py-3"
               placeholder="Message to convert to ISL"
               value={value}
               onChange={(e) => onChange(e.target.value)}
               disabled={disabled}
             />
-            <p className="mt-2 flex items-start gap-1.5 text-[11px] leading-snug text-muted-foreground/75">
+            <p className="mt-1.5 hidden items-start gap-1.5 text-[10px] leading-snug text-muted-foreground/75 sm:mt-2 sm:flex sm:text-[11px]">
               <Keyboard className="mt-0.5 h-3.5 w-3.5 shrink-0 opacity-65" />
               Tip: clear punctuation between ideas for cleaner sentence boundaries.
             </p>
@@ -102,12 +101,12 @@ export function InputPanel({
             </motion.p>
           ) : null}
 
-          <div className="mt-auto flex shrink-0 flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <div className="mt-auto flex shrink-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-3">
             {voiceSupported ? (
               <Button
                 type="button"
                 variant={listening ? 'destructive' : 'secondary'}
-                className="h-11 flex-1 rounded-xl border border-white/[0.06] shadow-sm sm:flex-initial sm:px-6"
+                className="h-10 flex-1 rounded-lg border border-white/[0.06] text-sm shadow-sm sm:h-11 sm:flex-initial sm:rounded-xl sm:px-6"
                 onClick={listening ? onVoiceStop : onVoiceStart}
                 disabled={disabled}
               >
@@ -128,7 +127,7 @@ export function InputPanel({
             <Button
               type="button"
               disabled={disabled || !value.trim()}
-              className="h-11 flex-1 rounded-xl bg-gradient-to-r from-primary via-indigo-500 to-accent px-6 font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition hover:brightness-110 active:scale-[0.99] disabled:opacity-40 sm:min-w-[200px]"
+              className="h-10 flex-1 rounded-lg bg-gradient-to-r from-primary via-indigo-500 to-accent px-4 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition hover:brightness-110 active:scale-[0.99] disabled:opacity-40 sm:h-11 sm:min-w-[200px] sm:rounded-xl sm:px-6"
               onClick={() => onSubmit()}
             >
               <Send className="mr-2 h-4 w-4 opacity-90" />

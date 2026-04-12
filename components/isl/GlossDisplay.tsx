@@ -38,8 +38,8 @@ export function GlossDisplay({
       transition={{ duration: 0.45, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
       className="h-full min-h-0 w-full max-w-full min-w-0 max-h-full"
     >
-      <Card className="flex h-full min-h-0 w-full max-w-full min-w-0 max-h-full flex-col overflow-hidden rounded-3xl border border-white/[0.07] bg-card/40 p-0 shadow-[var(--shadow-card)] backdrop-blur-xl">
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-1 px-5 pb-5 pt-5">
+      <Card className="flex h-full min-h-0 w-full max-w-full min-w-0 max-h-full flex-col overflow-hidden rounded-2xl border border-white/[0.07] bg-card/40 p-0 shadow-[var(--shadow-card)] backdrop-blur-xl lg:rounded-3xl">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-1 px-3.5 pb-3.5 pt-3.5 sm:px-5 sm:pb-5 sm:pt-5">
           {processingLabel ? (
             <motion.p
               initial={{ opacity: 0, y: -4 }}
@@ -57,7 +57,7 @@ export function GlossDisplay({
             </p>
           ) : null}
 
-          <div className="mb-3 min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain rounded-xl border border-white/[0.06] bg-background/30 p-3 ring-1 ring-inset ring-white/[0.03]">
+          <div className="mb-2 min-h-0 min-w-0 max-h-[min(38dvh,14rem)] flex-1 overflow-x-hidden overflow-y-auto overscroll-contain rounded-lg border border-white/[0.06] bg-background/30 p-2.5 ring-1 ring-inset ring-white/[0.03] sm:mb-3 sm:max-h-none sm:rounded-xl sm:p-3">
             <div className="flex flex-wrap content-start gap-2 break-words">
               <AnimatePresence mode="popLayout">
                 {displayTokens.length === 0 ? (
@@ -98,9 +98,9 @@ export function GlossDisplay({
             </div>
           </div>
 
-          <div className="shrink-0 rounded-xl border border-white/[0.08] bg-gradient-to-br from-background/80 to-muted/30 p-3.5 ring-1 ring-white/[0.04]">
-            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">Active gloss</p>
-            <p className="mt-1.5 break-words font-mono text-xl font-semibold tracking-tight text-foreground [overflow-wrap:anywhere] sm:text-2xl">
+          <div className="shrink-0 rounded-lg border border-white/[0.08] bg-gradient-to-br from-background/80 to-muted/30 p-3 ring-1 ring-white/[0.04] sm:rounded-xl sm:p-3.5">
+            <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-muted-foreground sm:text-[10px] sm:tracking-[0.18em]">Active gloss</p>
+            <p className="mt-1 break-words font-mono text-lg font-semibold tracking-tight text-foreground [overflow-wrap:anywhere] sm:mt-1.5 sm:text-xl md:text-2xl">
               {currentGloss ?? '—'}
             </p>
           </div>

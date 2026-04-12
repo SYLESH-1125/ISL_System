@@ -20,7 +20,7 @@ export function ThemeToggle() {
       type="button"
       variant="outline"
       size="sm"
-      className="rounded-xl border-white/15 bg-background/40"
+      className="h-9 w-9 shrink-0 rounded-lg border-white/15 bg-background/40 p-0 sm:h-10 sm:w-10 sm:rounded-xl"
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
       aria-label="Toggle color theme"
       disabled={!mounted}
