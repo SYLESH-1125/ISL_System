@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="420" viewBox="0 0 900 420" role="img" aria-label="ISL System architecture">
+<rect width="900" height="420" rx="16" fill="#0A0A0B" stroke="#2A2410"/>
+<text x="450" y="36" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="18" font-weight="800" fill="#D4AF37">ISL System — System Architecture</text>
+<rect x="80" y="90" width="150" height="56" rx="10" fill="#17171A" stroke="#D4AF37" stroke-width="1.2"/>
+<text x="155.0" y="123.0" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="12" font-weight="700" fill="#F2F1EC">Next.js UI</text>
+<rect x="280" y="90" width="150" height="56" rx="10" fill="#17171A" stroke="#D4AF37" stroke-width="1.2"/>
+<text x="355.0" y="123.0" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="12" font-weight="700" fill="#F2F1EC">NLP / SOV</text>
+<rect x="480" y="90" width="150" height="56" rx="10" fill="#17171A" stroke="#D4AF37" stroke-width="1.2"/>
+<text x="555.0" y="123.0" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="12" font-weight="700" fill="#F2F1EC">Gloss Map</text>
+<rect x="680" y="90" width="150" height="56" rx="10" fill="#17171A" stroke="#D4AF37" stroke-width="1.2"/>
+<text x="755.0" y="123.0" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="12" font-weight="700" fill="#F2F1EC">CWASA Avatar</text>
+<line x1="230" y1="118" x2="280" y2="118" stroke="#E8A33D" stroke-width="2" marker-end="url(#arr)"/>
+<line x1="430" y1="118" x2="480" y2="118" stroke="#E8A33D" stroke-width="2" marker-end="url(#arr)"/>
+<line x1="630" y1="118" x2="680" y2="118" stroke="#E8A33D" stroke-width="2" marker-end="url(#arr)"/>
+<defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#E8A33D"/></marker></defs>
+</svg>

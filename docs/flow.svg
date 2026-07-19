@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="200" viewBox="0 0 900 200" role="img" aria-label="ISL System flow">
+<rect width="900" height="200" rx="16" fill="#0A0A0B" stroke="#2A2410"/>
+<text x="450" y="32" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="16" font-weight="800" fill="#D4AF37">ISL System — Pipeline Flow</text>
+<rect x="52" y="60" width="140" height="72" rx="10" fill="#17171A" stroke="#D4AF37"/>
+<text x="122.0" y="98" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="11" font-weight="600" fill="#F2F1EC">Text / Voice</text>
+<text x="204.0" y="100" text-anchor="middle" font-size="18" fill="#E8A33D">→</text>
+<rect x="216" y="60" width="140" height="72" rx="10" fill="#17171A" stroke="#D4AF37"/>
+<text x="286.0" y="98" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="11" font-weight="600" fill="#F2F1EC">Tokenize</text>
+<text x="368.0" y="100" text-anchor="middle" font-size="18" fill="#E8A33D">→</text>
+<rect x="380" y="60" width="140" height="72" rx="10" fill="#17171A" stroke="#D4AF37"/>
+<text x="450.0" y="98" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="11" font-weight="600" fill="#F2F1EC">SOV Glosses</text>
+<text x="532.0" y="100" text-anchor="middle" font-size="18" fill="#E8A33D">→</text>
+<rect x="544" y="60" width="140" height="72" rx="10" fill="#17171A" stroke="#D4AF37"/>
+<text x="614.0" y="98" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="11" font-weight="600" fill="#F2F1EC">SiGML Files</text>
+<text x="696.0" y="100" text-anchor="middle" font-size="18" fill="#E8A33D">→</text>
+<rect x="708" y="60" width="140" height="72" rx="10" fill="#17171A" stroke="#D4AF37"/>
+<text x="778.0" y="98" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="11" font-weight="600" fill="#F2F1EC">3D Playback</text>
+</svg>
